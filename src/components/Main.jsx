@@ -182,8 +182,8 @@ export default function Main() {
     const componentDidMount = useCallback(async() => {
         await loadNetwork()
         await loadUser().then(response => {
-            // setUserAddress(response)
-            // loadDaiBalance(response)
+            setUserAddress(response)
+            loadDaiBalance(response)
             // loadHodlYield(response)
             // loadHodlBalance(response).then(response => {
             //     setHodlBalance(response)
@@ -197,12 +197,12 @@ export default function Main() {
         })
     }, [ 
         loadCountPublic,
-        // loadDaiBalance, 
+        loadDaiBalance, 
         // loadStakingBalance, 
         // loadNetwork,
         // loadHodlYield,
         // loadHodlBalance,
-        // setUserAddress,
+        setUserAddress,
         setHodlBalance
         // setIsStaking,
     ])
@@ -219,29 +219,29 @@ export default function Main() {
      *         function in order to display the user's current yield.
      */
 
-    useEffect(() => {
-        if(stakingBalance > 0 || userAddress !== ''){
-            loadHodlYield(userAddress).then(response => {
-                setHodlYield(response)
-            })
-        }
-    }, [userAddress, stakingBalance, hodlYield, isStaking, setHodlYield, loadHodlYield, setIsStaking])
+    // useEffect(() => {
+    //     if(stakingBalance > 0 || userAddress !== ''){
+    //         loadHodlYield(userAddress).then(response => {
+    //             setHodlYield(response)
+    //         })
+    //     }
+    // }, [userAddress, stakingBalance, hodlYield, isStaking, setHodlYield, loadHodlYield, setIsStaking])
 
     /**
      * @notice This useEffect creates a 60 second timer when the staking mechanism
      *          is triggered.
      */
-    useEffect(() => {
-        let interval = null
-        if(isStaking){
-            interval = setInterval(() => {
-                loadHodlYield(userAddress).then(response => {
-                    setHodlYield(response)
-                })
-            }, 60000)
-        }
-        return () => clearInterval(interval)
-    }, [isStaking, userAddress, loadHodlYield, setHodlYield])
+    // useEffect(() => {
+    //     let interval = null
+    //     if(isStaking){
+    //         interval = setInterval(() => {
+    //             loadHodlYield(userAddress).then(response => {
+    //                 setHodlYield(response)
+    //             })
+    //         }, 60000)
+    //     }
+    //     return () => clearInterval(interval)
+    // }, [isStaking, userAddress, loadHodlYield, setHodlYield])
 
    /**
     * @notice The following functions write to the smart contract.
@@ -256,39 +256,39 @@ export default function Main() {
     * @param {*This is the amount of Dai to stake in the contract.} x 
     */
 
-    const stake = async(x) => {
-        setSentStake(false)
-        let utils = { from: userAddress }
-        let bal = toWei(x)
-        await dai.methods.approve(hodlFarmAddress, bal).send(utils)
-        await hodlFarm.methods.stake(bal).send(utils)
-        .on('receipt', function(receipt){
-            console.log(receipt)
-            setSentStake(true)
-        })
-        setIsStaking(true)
-    }
+    // const stake = async(x) => {
+    //     setSentStake(false)
+    //     let utils = { from: userAddress }
+    //     let bal = toWei(x)
+    //     await dai.methods.approve(hodlFarmAddress, bal).send(utils)
+    //     await hodlFarm.methods.stake(bal).send(utils)
+    //     .on('receipt', function(receipt){
+    //         console.log(receipt)
+    //         setSentStake(true)
+    //     })
+    //     setIsStaking(true)
+    // }
 
-    const unstake = async() => {
-        setSentUnstake(false)
-        let utils = { from: userAddress }
-        await hodlFarm.methods.unstake().send(utils)
-        .on('receipt', function(receipt){
-            console.log(receipt)
-            setSentUnstake(true)
-        })
-        setIsStaking(false)
-    }
+    // const unstake = async() => {
+    //     setSentUnstake(false)
+    //     let utils = { from: userAddress }
+    //     await hodlFarm.methods.unstake().send(utils)
+    //     .on('receipt', function(receipt){
+    //         console.log(receipt)
+    //         setSentUnstake(true)
+    //     })
+    //     setIsStaking(false)
+    // }
 
-    const withdrawYield = async() => {
-        setSentWithdrawal(false)
-        let utils = { from: userAddress }
-        await hodlFarm.methods.withdrawYield().send(utils)
-        .on('receipt', function(receipt){
-            console.log(receipt)
-            setSentWithdrawal(true)
-        })
-    }
+    // const withdrawYield = async() => {
+    //     setSentWithdrawal(false)
+    //     let utils = { from: userAddress }
+    //     await hodlFarm.methods.withdrawYield().send(utils)
+    //     .on('receipt', function(receipt){
+    //         console.log(receipt)
+    //         setSentWithdrawal(true)
+    //     })
+    // }
 
 
     //
@@ -303,22 +303,22 @@ export default function Main() {
      *         The latter effect fetches the hodlToken balance and current yield.
      */
 
-    useEffect(() => {
-        if(sentStake || sentUnstake){
-            loadDaiBalance(userAddress)
-            loadStakingBalance(userAddress)
-        }
-    }, [sentStake, sentUnstake, userAddress, loadDaiBalance, loadStakingBalance])
+    // useEffect(() => {
+    //     if(sentStake || sentUnstake){
+    //         loadDaiBalance(userAddress)
+    //         loadStakingBalance(userAddress)
+    //     }
+    // }, [sentStake, sentUnstake, userAddress, loadDaiBalance, loadStakingBalance])
 
 
-        useEffect(() => {
-        if(sentWithdrawal){
-            loadHodlBalance(userAddress).then(res => {
-                setHodlBalance(res)
-            })
-            setHodlYield(0)
-        }
-    }, [sentWithdrawal, userAddress, loadHodlBalance, setHodlYield, setHodlBalance])
+    //     useEffect(() => {
+    //     if(sentWithdrawal){
+    //         loadHodlBalance(userAddress).then(res => {
+    //             setHodlBalance(res)
+    //         })
+    //         setHodlYield(0)
+    //     }
+    // }, [sentWithdrawal, userAddress, loadHodlBalance, setHodlYield, setHodlBalance])
 
     return (
         <div>
