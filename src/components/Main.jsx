@@ -31,12 +31,15 @@ const Boxes = styled.div`
  */
 
 const web3 = new Web3(Web3.givenProvider)
-const hodlFarmAddress = '0xb3A7bC3fB20c289311e91dfE778d16590884e6F9'
-const hodlTokenAddress = '0xec1285C81Ef9d039A46896e09f8f29dEb7d0556e'
-const daiAddress = '0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa'
-const dai = new web3.eth.Contract(Dai.abi, daiAddress)
-const hodlToken = new web3.eth.Contract(HodlToken.abi, hodlTokenAddress)
-const hodlFarm = new web3.eth.Contract(HodlFarm.abi, hodlFarmAddress)
+// const hodlFarmAddress = '0xb3A7bC3fB20c289311e91dfE778d16590884e6F9'
+// const hodlTokenAddress = '0xec1285C81Ef9d039A46896e09f8f29dEb7d0556e'
+// const daiAddress = '0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa'
+const address = "0x7d79d236B59Eeb4A83d11B4F10AD97E7bE69FD87"
+const abi = '[{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"address","name":"_add","type":"address"}],"name":"addToBlacklist","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"blacklist","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"count","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"countPublic","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"incrementCount","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"incrementCountPublic","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"minusCountPublic","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_add","type":"address"}],"name":"removeFromBlacklist","outputs":[],"stateMutability":"nonpayable","type":"function"}]'
+// const dai = new web3.eth.Contract(Dai.abi, daiAddress)
+// const hodlToken = new web3.eth.Contract(HodlToken.abi, hodlTokenAddress)
+// const hodlFarm = new web3.eth.Contract(HodlFarm.abi, hodlFarmAddress)
+const testing = new web3.eth.Contract(abi,address)
 
 
 /**
@@ -103,47 +106,30 @@ export default function Main() {
 
     const loadNetwork = useCallback(async() => {
         let num = await web3.currentProvider.chainId;
-        if(num === '0x1'){
-            setNetwork('Mainnet')
-        } else if(num === '0x3'){
-            setNetwork('Ropsten')
-        } else if(num === '0x4'){
-            setNetwork('Rinkeby')
-        } else if(num === '0x5'){
-            setNetwork('Goerli')
-        } else if(num === '0x2a'){
-            setNetwork('Kovan')
-        } else {
-            setNetwork('N/A')
-        }
+        setNetwork('Fantom')
     }, [setNetwork])
 
 
     const loadDaiBalance = useCallback(async(usr) => {
-        let bal = await dai.methods.balanceOf(usr.toString()).call()
-        let formatBal = fromWei(bal)
-        if(formatBal.length > 5){
-            setDaiBalance(Number.parseFloat(formatBal).toPrecision(4))
-        } else {
-            setDaiBalance(formatBal)
-        }
+        let bal = await testing.methods.countPublic().call()
+        setDaiBalance(bal)
     }, [setDaiBalance])
 
 
-    const loadStakingBalance = useCallback(async(usr) => {
-        let bal = await hodlFarm.methods.stakingBalance(usr.toString()).call()
-        let formatBal = fromWei(bal)
-        if(formatBal.length > 5) {
-            setStakingBalance(Number.parseFloat(fromWei(bal)).toPrecision(4))
-        } else {
-            setStakingBalance(formatBal)
-        }
-        if ( bal > 0){
-            return true
-        } else {
-            return false
-        }
-    }, [setStakingBalance])
+    // const loadStakingBalance = useCallback(async(usr) => {
+    //     let bal = await hodlFarm.methods.stakingBalance(usr.toString()).call()
+    //     let formatBal = fromWei(bal)
+    //     if(formatBal.length > 5) {
+    //         setStakingBalance(Number.parseFloat(fromWei(bal)).toPrecision(4))
+    //     } else {
+    //         setStakingBalance(formatBal)
+    //     }
+    //     if ( bal > 0){
+    //         return true
+    //     } else {
+    //         return false
+    //     }
+    // }, [setStakingBalance])
 
 /**
  * @notice This function fetches the current yield accrued by user's stake.
@@ -155,33 +141,37 @@ export default function Main() {
  *          Before adding the initYield with the savedYield, they're both multiplied
  *          by one. This turns the string balances into numbers; otherwise, they concatenate.
  */
-    const loadHodlYield = useCallback(async(usr) => {
-        let numOfMinutes = await hodlFarm.methods.calculateYieldTime(usr).call()
-        let initYield = ((stakingBalance * numOfMinutes) / 100)
-        let savedYield = await hodlFarm.methods.hodlBalance(usr).call()
+    // const loadHodlYield = useCallback(async(usr) => {
+    //     let numOfMinutes = await hodlFarm.methods.calculateYieldTime(usr).call()
+    //     let initYield = ((stakingBalance * numOfMinutes) / 100)
+    //     let savedYield = await hodlFarm.methods.hodlBalance(usr).call()
 
-        let balA = (initYield)*1      //These variables convert the fetched strings into numbers
-        let balB = (fromWei(savedYield))*1
-        let totalYield = (balA + balB)
+    //     let balA = (initYield)*1      //These variables convert the fetched strings into numbers
+    //     let balB = (fromWei(savedYield))*1
+    //     let totalYield = (balA + balB)
 
-        if(totalYield.toString().length > 5) {
-            return(Number.parseFloat(totalYield).toPrecision(3))
-        } else {
-            return totalYield
-        }
-    }, [stakingBalance])
+    //     if(totalYield.toString().length > 5) {
+    //         return(Number.parseFloat(totalYield).toPrecision(3))
+    //     } else {
+    //         return totalYield
+    //     }
+    // }, [stakingBalance])
 
 
-    const loadHodlBalance = useCallback(async(usr) => {
-        let bal = await hodlToken.methods.balanceOf(usr).call()
-        let formatBal = fromWei(bal)
-        if(formatBal.length > 5) {
-            return(Number.parseFloat(fromWei(bal)).toFixed(4))
-        } else {
-            return formatBal
-        }
+    // const loadHodlBalance = useCallback(async(usr) => {
+    //     let bal = await hodlToken.methods.balanceOf(usr).call()
+    //     let formatBal = fromWei(bal)
+    //     if(formatBal.length > 5) {
+    //         return(Number.parseFloat(fromWei(bal)).toFixed(4))
+    //     } else {
+    //         return formatBal
+    //     }
+    // }, [])
+
+    const loadCountPublic = useCallback(async() => {
+        let countPublic = await testing.methods.countPublic.call()
+        return countPublic
     }, [])
-
 
 
     /**
@@ -192,25 +182,29 @@ export default function Main() {
     const componentDidMount = useCallback(async() => {
         await loadNetwork()
         await loadUser().then(response => {
-            setUserAddress(response)
-            loadDaiBalance(response)
-            loadHodlYield(response)
-            loadHodlBalance(response).then(response => {
+            // setUserAddress(response)
+            // loadDaiBalance(response)
+            // loadHodlYield(response)
+            // loadHodlBalance(response).then(response => {
+            //     setHodlBalance(response)
+            // })
+            // loadStakingBalance(response).then(response => {
+            //     setIsStaking(response)
+            // })
+            loadCountPublic(response).then(response => {
                 setHodlBalance(response)
-            })
-            loadStakingBalance(response).then(response => {
-                setIsStaking(response)
             })
         })
     }, [ 
-        loadDaiBalance, 
-        loadStakingBalance, 
-        loadNetwork,
-        loadHodlYield,
-        loadHodlBalance,
-        setUserAddress,
-        setHodlBalance,
-        setIsStaking,
+        loadCountPublic,
+        // loadDaiBalance, 
+        // loadStakingBalance, 
+        // loadNetwork,
+        // loadHodlYield,
+        // loadHodlBalance,
+        // setUserAddress,
+        setHodlBalance
+        // setIsStaking,
     ])
 
 
