@@ -21,7 +21,7 @@
     "web3": "^1.3.0"
   },
 
-  "homepage": "http://andrew-fleming.github.io/yield-farm",
+  "homepage": "http://malooky23.github.io/yield-farm",
   "scripts": {
     "start": "react-scripts start",
     "predeploy": "npm run build",
