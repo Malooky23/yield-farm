@@ -320,18 +320,18 @@ export default function Main() {
     //     }
     // }, [sentWithdrawal, userAddress, loadHodlBalance, setHodlYield, setHodlBalance])
 
-    return (
-        <div>
-            <NavBar/>
-            <Container>
-                <Boxes>
-                    <StakeBox  
-                        stake={stake} 
-                        unstake={unstake}
-                    />
-                    <YieldBox withdrawYield={withdrawYield}/> 
-                </Boxes>
-            </Container>
-        </div>
-    )
+    // return (
+    //     <div>
+    //         <NavBar/>
+    //         <Container>
+    //             <Boxes>
+    //                 <StakeBox  
+    //                     stake={stake} 
+    //                     unstake={unstake}
+    //                 />
+    //                 <YieldBox withdrawYield={withdrawYield}/> 
+    //             </Boxes>
+    //         </Container>
+    //     </div>
+    // )
 }
